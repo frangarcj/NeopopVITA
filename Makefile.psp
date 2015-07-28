@@ -1,0 +1,62 @@
+PSPSDK=$(shell psp-config --pspsdk-path)
+
+PSPAPP=System_PSP
+DATA=$(PSPAPP)/data
+PSPLIB=$(PSPAPP)/psplib
+ZLIB=$(PSPAPP)/zLIB
+
+CORE=Core
+TLCS900=$(CORE)/TLCS-900h
+Z80=$(CORE)/z80
+
+PSP_APP_NAME=NeoPop PSP
+PSP_APP_VER=0.71.15
+
+TARGET=neopoppsp
+EXTRA_TARGETS=EBOOT.PBP
+PSP_EBOOT_TITLE=$(PSP_APP_NAME) $(PSP_APP_VER)
+PSP_EBOOT_ICON=$(DATA)/neopop-icon.png
+
+BUILD_APP=$(Z80)/Z80.o $(Z80)/dasm.o $(CORE)/Z80_interface.o \
+          $(TLCS900)/TLCS900h_registers.o \
+          $(TLCS900)/TLCS900h_interpret_src.o \
+          $(TLCS900)/TLCS900h_interpret_single.o \
+          $(TLCS900)/TLCS900h_interpret_reg.o \
+          $(TLCS900)/TLCS900h_interpret_dst.o \
+          $(TLCS900)/TLCS900h_interpret.o \
+          $(TLCS900)/TLCS900h_disassemble_src.o \
+          $(TLCS900)/TLCS900h_disassemble_reg.o \
+          $(TLCS900)/TLCS900h_disassemble_extra.o \
+          $(TLCS900)/TLCS900h_disassemble_dst.o \
+          $(TLCS900)/TLCS900h_disassemble.o \
+          $(CORE)/dma.o $(CORE)/bios.o $(CORE)/biosHLE.o $(CORE)/mem.o \
+          $(CORE)/interrupt.o $(CORE)/gfx.o $(CORE)/sound.o \
+          $(CORE)/gfx_scanline_colour.o $(CORE)/gfx_scanline_mono.o \
+          $(CORE)/flash.o $(CORE)/rom.o $(CORE)/state.o $(CORE)/neopop.o \
+          $(ZLIB)/crc32.o $(ZLIB)/adler32.o $(ZLIB)/unzip.o $(ZLIB)/zutil.o \
+          $(ZLIB)/infblock.o $(ZLIB)/inffast.o $(ZLIB)/infutil.o \
+          $(ZLIB)/infcodes.o $(ZLIB)/inflate.o $(ZLIB)/inftrees.o
+BUILD_PSPLIB=$(PSPLIB)/psp.o $(PSPLIB)/font.o $(PSPLIB)/image.o \
+             $(PSPLIB)/video.o $(PSPLIB)/audio.o $(PSPLIB)/fileio.o \
+             $(PSPLIB)/menu.o $(PSPLIB)/ui.o $(PSPLIB)/ctrl.o \
+             $(PSPLIB)/kybd.o $(PSPLIB)/perf.o $(PSPLIB)/util.o \
+             $(PSPLIB)/init.o
+BUILD_PSPAPP=$(PSPAPP)/emulate.o $(PSPAPP)/emumenu.o $(PSPAPP)/neopop.o \
+             $(PSPAPP)/system_rom.o $(PSPAPP)/main.o
+
+OBJS=$(BUILD_APP) $(BUILD_PSPLIB) $(BUILD_PSPAPP)
+
+DEFINES=-DCHIP_FREQUENCY=22050 #-DPSP_DEBUG
+BASE_DEFS=-DPSP \
+  -DPSP_APP_VER=\"$(PSP_APP_VER)\" \
+	-DPSP_APP_NAME="\"$(PSP_APP_NAME)\""
+CFLAGS=-O2 -G0 -Wall $(BASE_DEFS) $(DEFINES)
+CXXFLAGS=$(CFLAGS) -fno-exceptions -fno-rtti
+ASFLAGS=$(CFLAGS)
+INCDIR=$(PSPLIB) $(PSPAPP) $(CORE) $(TLCS900) $(Z80) $(ZLIB)
+LIBS=-lpng -lz -lm -lc -lpspgu -lpsppower -lpspaudio -lpsprtc
+
+include $(PSPSDK)/lib/build.mak
+
+include $(PSPLIB)/build.mak
+
