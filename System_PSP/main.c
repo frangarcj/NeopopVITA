@@ -8,8 +8,10 @@
 #include "psplib/video.h"
 #include "psplib/pl_psp.h"
 #include "psplib/ctrl.h"
+#include <vita2d.h>
 
 #include "emumenu.h"
+#include "revitalize.h"
 
 char *stpcpy(char *dest, const char *src)
 {
@@ -26,6 +28,25 @@ char *stpcpy(char *dest, const char *src)
 PSP2_MODULE_INFO(0,1,PSP_APP_NAME);
 //PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER);
 
+void show_splash()
+{
+	vita2d_start_drawing();
+	vita2d_clear_screen();
+
+	vita2d_texture *splash = vita2d_create_empty_texture(960, 544);
+
+	splash = vita2d_load_PNG_buffer(revitalize);
+
+	vita2d_draw_texture(splash, 0, 0);
+
+	vita2d_end_drawing();
+	vita2d_swap_buffers();
+
+	sceKernelDelayThread(5000000); // Delay 5 seconds
+
+	vita2d_free_texture(splash);
+}
+
 static void ExitCallback(void* arg)
 {
   ExitPSP = 1;
@@ -38,6 +59,7 @@ int main(int argc, char **argv)
   pspCtrlInit();
   pspVideoInit();
 
+	show_splash();
 #ifdef PSP_DEBUG
   FILE *debug = fopen("message.txt", "w");
   fclose(debug);
