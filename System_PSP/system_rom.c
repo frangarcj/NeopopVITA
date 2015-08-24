@@ -116,7 +116,7 @@ BOOL system_load_rom(char* filename)
 #ifdef ZIPSUPPORT
   if(check_zip(filename))
   {
-    ret = LoadRomZip(copyFNAME);    // Load Zip
+    ret = LoadRomZip(filename);    // Load Zip
   }
   else
 #endif
