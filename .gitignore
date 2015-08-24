@@ -47,3 +47,6 @@ RACE.elf
 *.elf
 *.velf
 background.png
+uvl.h
+db.json
+libUVL_stub.a

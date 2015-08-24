@@ -425,8 +425,8 @@ int InitMenu()
 /* Load options */
 void LoadOptions()
 {
-  char *path = (char*)malloc(sizeof(char) * (strlen(pl_psp_get_app_directory()) + strlen(OptionsFile) + 1));
-  sprintf(path, "%s%s", pl_psp_get_app_directory(), OptionsFile);
+	pl_file_path path;
+	snprintf(path, sizeof(path) - 1, "%sneopop.ini", pl_psp_get_app_directory());
 
   /* Initialize INI structure */
 	pl_ini_file init;
@@ -449,16 +449,14 @@ void LoadOptions()
 	pl_ini_get_string(&init, "File", "Game Path", NULL, GamePath, sizeof(GamePath));
 
   /* Clean up */
-  free(path);
-	/* Clean up */
   pl_ini_destroy(&init);
 }
 
 /* Save options */
 int SaveOptions()
 {
-  char *path = (char*)malloc(sizeof(char) * (strlen(pl_psp_get_app_directory()) + strlen(OptionsFile) + 1));
-  sprintf(path, "%s%s", pl_psp_get_app_directory(), OptionsFile);
+	pl_file_path path;
+	snprintf(path, sizeof(path) - 1, "%sneopop.ini", pl_psp_get_app_directory());
 
 	/* Initialize INI structure */
   pl_ini_file init;
@@ -483,7 +481,6 @@ int SaveOptions()
 
   /* Clean up */
   pl_ini_destroy(&init);
-  free(path);
 
   return status;
 }
@@ -859,6 +856,8 @@ int OnMenuItemChanged(const struct PspUiMenu *uimenu, pl_menu_item* item,
       UiMetric.Animate = value; break;
     }
   }
+
+	SaveOptions();
 
   return 1;
 }
