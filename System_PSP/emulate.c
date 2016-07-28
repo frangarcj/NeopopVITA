@@ -63,8 +63,8 @@ int InitEmulation()
   cfb = Screen->Pixels;
 
   pl_file_path background;
-  snprintf(background, sizeof(background) - 1, "%sbg3x.png",
-           pl_psp_get_app_directory());
+  snprintf(background, sizeof(background) - 1, "%sbg3x.png", "app0:/"
+           /*pl_psp_get_app_directory()*/);
   BG3X = pspImageLoadPng2D(background);
 
   pl_snd_set_callback(0, AudioCallback, NULL);

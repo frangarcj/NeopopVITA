@@ -54,12 +54,12 @@ static void ExitCallback(void* arg)
 int main(int argc, char **argv)
 {
   /* Initialize PSP */
-  pl_psp_init("cache0:/NeopopVITA/");
+  pl_psp_init("ux0:/data/NeopopVITA/");
   pl_snd_init(512,1);
   pspCtrlInit();
   pspVideoInit();
 
-	show_splash();
+//	show_splash();
 #ifdef PSP_DEBUG
   FILE *debug = fopen("message.txt", "w");
   fclose(debug);
