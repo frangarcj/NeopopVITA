@@ -81,7 +81,7 @@ int check_zip(char *filename)
 {
     unsigned char buf[2];
     SceUID fd = NULL;
-    fd = sceIoOpen(filename,PSP2_O_RDONLY,0777);
+    fd = sceIoOpen(filename,SCE_O_RDONLY,0777);
     if(!fd) return (0);
     sceIoRead(fd,buf, 2);
     sceIoClose(fd);
@@ -151,7 +151,7 @@ void system_unload_rom(void)
 static BOOL LoadRomFile(char* filename)
 {
   int size;
-  SceUID fd = sceIoOpen(filename,PSP2_O_RDONLY,0777);
+  SceUID fd = sceIoOpen(filename,SCE_O_RDONLY,0777);
 
   if (fd<=0)
   {
@@ -159,7 +159,7 @@ static BOOL LoadRomFile(char* filename)
     return FALSE;
   }
 
-  size=sceIoLseek(fd,0,PSP2_SEEK_END);
+  size=sceIoLseek(fd,0,SCE_SEEK_END);
   sceIoClose(fd);
 
   rom.length = size;

@@ -42,7 +42,7 @@ BUILD_PORT=$(PSPAPP)/emulate.o $(PSPAPP)/emumenu.o $(PSPAPP)/neopop.o \
 
 OBJS=$(BUILD_APP) $(BUILD_MZ) $(BUILD_PORT)
 
-LIBS= -lpsplib -lvita2d -lfreetype -lpng -lz -lm  -lSceDisplay_stub -lSceGxm_stub 	\
+LIBS= -lpsplib -lvita2d -lfreetype -lpng -lz -lm -lSceSysmodule_stub -lSceCommonDialog_stub  -lSceDisplay_stub -lSceGxm_stub 	\
 	-lSceCtrl_stub -lSceAudio_stub -lSceRtc_stub -lScePower_stub -lSceAppUtil_stub
 
 DEFINES = -DPSP -DPSP_APP_NAME=\"$(PSP_APP_NAME)\" -DPSP_APP_VER=\"$(PSP_APP_VER)\" \
@@ -63,13 +63,17 @@ ASFLAGS = $(CFLAGS)
 
 
 
-all: $(TARGET).velf
+all: eboot.bin
+
+eboot.bin: $(TARGET).velf
+	vita-make-fself $(TARGET).velf eboot.bin
+	vita-mksfoex -s TITLE_ID=FRAN00004 "NeopopVITA" param.sfo
 
 $(TARGET).velf: $(TARGET).elf
 	#advice from xyzz strip before create elf
 		$(PREFIX)-strip -g $<
 	#i put db.json there use your location
-		vita-elf-create  $< $@ $(VITASDK)/bin/db.json
+		vita-elf-create  $< $@ 
 
 $(TARGET).elf: $(OBJS)
 	$(CC) $(CFLAGS) $(ASFLAGS) $^ $(LIBS) -o $@
@@ -77,5 +81,5 @@ $(TARGET).elf: $(OBJS)
 clean:
 	@rm -rf $(TARGET).elf $(TARGET).velf $(OBJS) $(DATA)/*.h
 
-copy: $(TARGET).velf
-	@cp $(TARGET).velf ~/PSPSTUFF/compartido/$(TARGET).elf
+copy: eboot.bin
+	@cp eboot.bin param.sfo /mnt/shared/NeopopVITA
